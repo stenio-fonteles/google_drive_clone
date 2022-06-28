@@ -1,27 +1,34 @@
 import { AiOutlineCloudUpload } from "react-icons/ai"
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { types } from '../../utils/mediaFormats'
 
 function Home(){
-    const [ file, setFile ] = useState('');
+    const [ , setFile ] = useState('');
+    const [ fileType, setFileType ] = useState('');
     const [ filePreviewUrl, setFilePreviewUrl ] = useState('');
 
-    useEffect(() => {
-        if(!file) return;
     
-        const urlObject = URL.createObjectURL(file)
+    const handleFileChange = (e) => {
+        const fileInputValue = e.target.files[0];
+        if(!fileInputValue) return
+
+        const urlObject = URL.createObjectURL(fileInputValue)
+        
+        setFile(fileInputValue);
+        setFileType(types[fileInputValue.type]);
         setFilePreviewUrl(urlObject)
-    }, [file]);
-
-
-    function submit() {
-        const formData = new FormData();
     }
 
     return(
         <>
             <section className="flex">
-                <section className=" w-1/3 h-screen bg-leftScreen text-center ">
-                    <img src={filePreviewUrl} />
+                <section className=" w-1/3 h-screen bg-leftScreen text-center">
+                    {fileType === "image" && (
+                        <img src={filePreviewUrl} alt="preview"/>
+                    )}
+                    {fileType === "video" && (
+                        <video src={filePreviewUrl} controls alt="preview"/>
+                    )}
                 </section>
                     <section className="bg-rightScreen h-screen w-2/3 border-l-border flex justify-center items-center">
                         <div className="flex justify-center items-center w-full">
@@ -31,7 +38,7 @@ function Home(){
                                     <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Clique para enviar</span> ou arraste e solte</p>
                                     <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
                                 </div>
-                                <input id="dropzone-file" onChange={(e) => setFile(e.target.files[0])} type="file" className="hidden mb-px"  />
+                                <input id="dropzone-file" onChange={handleFileChange} type="file" className="hidden mb-px"  />
                             </label>
                         </div>     
                 </section>
